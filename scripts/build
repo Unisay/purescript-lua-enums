@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+echo "Building..."
+
+spago build -u '-g corefn'
+
+pslua --foreign-path . --ps-output output --entry Data.Enum --lua-output-file dist/Data.Enum.lua
