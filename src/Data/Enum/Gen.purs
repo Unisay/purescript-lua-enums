@@ -12,7 +12,9 @@ genBoundedEnum :: forall m a. MonadGen m => BoundedEnum a => m a
 genBoundedEnum =
   case succ bottom of
     Just a →
-      let possibilities = enumFromTo a top :: Array a
-      in elements (bottom :| possibilities)
+      let
+        possibilities = enumFromTo a top :: Array a
+      in
+        elements (bottom :| possibilities)
     Nothing →
       pure bottom
