@@ -51,6 +51,17 @@ check("toCharCode 'Ā' U+0100 (2 bytes)", E.toCharCode(bytes(0xC4, 0x80)) == 256
 check("toCharCode U+FFFF top (3 bytes)", E.toCharCode(bytes(0xEF, 0xBF, 0xBF)) == 65535,
       "got " .. tostring(E.toCharCode(bytes(0xEF, 0xBF, 0xBF))))
 
+-- A lone code-unit byte from Data.String.CodeUnits (a 1-byte slice that is the
+-- lead/continuation byte of a multibyte char): toCharCode must return that byte
+-- and NOT read a missing c:byte(2) and crash. Data.String.CodePoints reassembles
+-- code points from these bytes itself, so byte-in == byte-out is required.
+check("toCharCode lone lead byte 0xC3 -> 195 (no crash)", E.toCharCode(bytes(0xC3)) == 195,
+      "got " .. tostring(E.toCharCode(bytes(0xC3))))
+check("toCharCode lone continuation byte 0x80 -> 128 (no crash)", E.toCharCode(bytes(0x80)) == 128,
+      "got " .. tostring(E.toCharCode(bytes(0x80))))
+check("toCharCode lone byte 0xF0 -> 240 (no crash)", E.toCharCode(bytes(0xF0)) == 240,
+      "got " .. tostring(E.toCharCode(bytes(0xF0))))
+
 --------------------------------------------------------------------------------
 -- #80 fromCharCode UTF-8-encodes the code point (no error above 255) ---------
 
